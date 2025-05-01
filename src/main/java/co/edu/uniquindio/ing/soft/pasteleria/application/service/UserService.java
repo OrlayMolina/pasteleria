@@ -75,7 +75,7 @@ public class UserService implements ManageUserUseCase {
                     command.updatedAt()
             );
 
-            String body = EmailTemplateConfig.bodyActualizarPassword.replace("[Codigo_Activacion]", codigo);
+            String body = EmailTemplateConfig.bodyCreacionCuenta.replace("[Codigo_Activacion]", codigo);
             emailService.enviarCorreo( new EmailDTO("Creación de Usuario en Pastelería Feliz", body, command.email()) );
 
             userPort.saveUser(user);
