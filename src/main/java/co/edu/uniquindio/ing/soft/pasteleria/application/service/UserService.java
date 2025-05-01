@@ -166,7 +166,7 @@ public class UserService implements ManageUserUseCase {
             existingUser.setEmail(command.email());
 
             if (command.password() != null && !command.password().isEmpty()) {
-                existingUser.setPassword(command.password());
+                existingUser.setPassword(encriptarPassword(command.password()));
             }
 
             existingUser.setStatus(command.status());

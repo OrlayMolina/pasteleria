@@ -20,7 +20,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserJpaRepository userJpaRepository;
     private final JWTUtils jwtUtils;
-    private final String url = "https://pasteleria-feliz.web.app";
+    //private final String url = "https://pasteleria-feliz.web.app";
+    private final String url = "http://localhost:4200";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,

@@ -22,7 +22,8 @@ public class OAuth2FailureHandler implements AuthenticationFailureHandler {
 
         String errorMessage = exception.getMessage();
         // Puedes codificar el mensaje para pasarlo por URL
-        String redirectUrl = "https://pasteleria-feliz.web.app/login?error=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
+        // String redirectUrl = "https://pasteleria-feliz.web.app/login?error=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
+        String redirectUrl = "http://localhost:4200/login?error=" + URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
         response.sendRedirect(redirectUrl);
     }
 }

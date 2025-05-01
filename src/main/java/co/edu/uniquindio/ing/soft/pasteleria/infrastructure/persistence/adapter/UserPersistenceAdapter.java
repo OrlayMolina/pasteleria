@@ -53,6 +53,7 @@ public class UserPersistenceAdapter implements UserPort {
             existingEntity.setLastName(user.getLastName());
             existingEntity.setSecondLastName(user.getSecondLastName());
             existingEntity.setEmail(user.getEmail());
+            existingEntity.setPassword(user.getPassword());
             existingEntity.setPhone(user.getPhone());
             existingEntity.setStatus(user.getStatus());
             existingEntity.setUpdatedAt(user.getUpdatedAt());
@@ -88,7 +89,6 @@ public class UserPersistenceAdapter implements UserPort {
         }
 
         try {
-            optionalEntity.get().setPassword("null");
             return Optional.of(persistenceMapper.toDomainResponse(optionalEntity.get()));
         } catch (DomainException e) {
             throw new RuntimeException("Error al convertir UserEntity a dominio User", e);
