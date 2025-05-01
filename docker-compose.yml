@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+
+#  postgres:
+#    image: postgres:latest
+#    container_name: postgres
+#    environment:
+#      POSTGRES_DB: pasteleria_db
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    networks:
+#      - back-network
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+
+
+  spring-back-pasteleria:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-back-container
+    ports:
+      - "8080:8080"
+    networks:
+      - back-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  back-network:
+    driver: bridge
+
+#volumes:
+#  postgres_data:
