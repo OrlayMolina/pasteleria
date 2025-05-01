@@ -1,5 +1,6 @@
 package co.edu.uniquindio.ing.soft.pasteleria.infrastructure.controller;
 
+import co.edu.uniquindio.ing.soft.pasteleria.application.dto.CambiarPasswordDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.LoginDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.MensajeDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.TokenDTO;
@@ -35,9 +36,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/recuperar-contrasena")
-    public ResponseEntity<MensajeDTO<String>> resetPassword(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<MensajeDTO<String>> resetPassword(@RequestBody CambiarPasswordDTO cambiarPasswordDTO) {
         try {
-            String msj = authService.resetPassword(loginDTO);
+            String msj = authService.resetPassword(cambiarPasswordDTO);
             return ResponseEntity.ok(new MensajeDTO<>(false, "Conectó"));
         } catch (DomainException e) {
             return ResponseEntity.status(NOT_FOUND).body(new MensajeDTO<>(true, "Error enviando correo de contraseña"));

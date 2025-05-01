@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration config = new CorsConfiguration();
-                            config.setAllowedOrigins(List.of("http://localhost:4200", "https://pasteleria-feliz.web.app")); // solo uno
+                            config.setAllowedOrigins(List.of("http://localhost:4200", "https://pasteleria-feliz.web.app"));
                             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                             config.setAllowedHeaders(List.of("Origin", "Accept", "Content-Type", "Authorization"));
                             config.setAllowCredentials(true);
@@ -40,15 +40,16 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/auth/**").permitAll()
+                        .requestMatchers("/", "/api/auth/**", "/login/oauth2/code/*").permitAll() // Añadido endpoint OAuth2
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/api/auth/login")
+                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/*")) // Especificar endpoint
                         .successHandler(successHandler)
-                        .failureHandler(failureHandler) // aquí se configura
+                        .failureHandler(failureHandler)
                 )
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class); // <-- Aquí se integra
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

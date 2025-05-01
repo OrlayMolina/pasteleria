@@ -1,6 +1,7 @@
 package co.edu.uniquindio.ing.soft.pasteleria.application.ports.input;
 
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.MensajeDTO;
+import co.edu.uniquindio.ing.soft.pasteleria.application.dto.request.ActivateUserCommand;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.request.CreateUserCommand;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.request.UpdateUserCommand;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.response.PageResponse;
@@ -12,6 +13,8 @@ import java.util.List;
 
 public interface ManageUserUseCase {
     MensajeDTO<String> createUser(CreateUserCommand command) throws DomainException;
+
+    String userActivite(ActivateUserCommand command) throws DomainException;
 
     MensajeDTO<String> updateUser(Long id, UpdateUserCommand command);
 

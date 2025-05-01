@@ -24,7 +24,7 @@ public class User {
     private String lastName;
     private String secondLastName;
     private String email;
-    private ValidationCode ValidationCodeRegister;
+    private ValidationCode validationCodeRegister;
     private String password;
     private Status status;
     private boolean isAdmin;
@@ -52,6 +52,28 @@ public class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+    public User(TypeDocument typeDocument, String documentNumber, String phone, String position,
+                Float salary, String firstName, String secondName, String lastName,
+                String secondLastName, String email, ValidationCode validationCodeRegister, String password, Status status,
+                boolean isAdmin, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.typeDocument = typeDocument;
+        this.documentNumber = documentNumber;
+        this.phone = phone;
+        this.position = position;
+        this.salary = salary;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.lastName = lastName;
+        this.secondLastName = secondLastName;
+        this.email = email;
+        this.validationCodeRegister = validationCodeRegister;
+        this.password = password;
+        this.status = status;
+        this.isAdmin = isAdmin;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
 
     @Override
     public String toString() {

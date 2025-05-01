@@ -1,11 +1,15 @@
 package co.edu.uniquindio.ing.soft.pasteleria.application.service;
 
+import co.edu.uniquindio.ing.soft.pasteleria.application.dto.CambiarPasswordDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.EmailDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.LoginDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.TokenDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.ports.input.ManageAuthUseCase;
+import co.edu.uniquindio.ing.soft.pasteleria.application.ports.input.ManageEmailUseCase;
+import co.edu.uniquindio.ing.soft.pasteleria.application.ports.output.UserPort;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.exception.DomainException;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.exception.ValidationCodeNotSentException;
+import co.edu.uniquindio.ing.soft.pasteleria.domain.model.User;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.model.ValidationCode;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.adapter.config.EmailTemplateConfig;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.adapter.config.JWTUtils;
@@ -19,14 +23,17 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
+import static co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.adapter.config.CryptoPassword.encriptarPassword;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService implements ManageAuthUseCase {
 
     private final JWTUtils jwtUtils;
-    private final EmailService emailService;
     private final UserJpaRepository userRepository;
+    private final UserPort userPort;
     private final EmailTemplateConfig emailTemplateConfig;
+    private final ManageEmailUseCase emailService;
     private final UserJpaRepository userJpaRepository;
 
     @Override
@@ -54,40 +61,58 @@ public class AuthService implements ManageAuthUseCase {
     }
 
     @Override
-    public String resetPassword(LoginDTO loginDTO) throws DomainException {
-        Optional<UserEntity> userEntity = userJpaRepository.findByEmail(loginDTO.email());
+    public String resetPassword(CambiarPasswordDTO cambiarPasswordDTO) throws DomainException {
 
-        if (userEntity.isEmpty()) {
-            throw new DomainException("El correo no está registrado en el sistema.");
+        try{
+            Optional<UserEntity> userEntity = userJpaRepository.findByEmail(cambiarPasswordDTO.email());
+
+            if (userEntity.isEmpty()) {
+                throw new DomainException("El correo no está registrado en el sistema.");
+            }
+
+            UserEntity userEnt = userEntity.get();
+            ValidationCode codigoValidacion = userEnt.getValidationCodePassword();
+
+            if (codigoValidacion.getCode().
+                    equals(cambiarPasswordDTO.codigoVerificacion()))
+            {
+                if(codigoValidacion.getCreatedAt().
+                        plusMinutes(15).isAfter(LocalDateTime.now()))
+                {
+
+                    userEnt.setPassword( encriptarPassword(cambiarPasswordDTO.passwordNueva()));
+                    User user = new User(
+                            userEnt.getTypeDocument(),
+                            userEnt.getDocumentNumber(),
+                            userEnt.getPhone(),
+                            userEnt.getPosition(),
+                            userEnt.getSalary(),
+                            userEnt.getFirstName(),
+                            userEnt.getSecondName(),
+                            userEnt.getLastName(),
+                            userEnt.getSecondLastName(),
+                            userEnt.getEmail(),
+                            userEnt.getPassword(),
+                            userEnt.getStatus(),
+                            userEnt.getIsAdmin(),
+                            userEnt.getCreatedAt(),
+                            userEnt.getUpdatedAt()
+                    );
+                    userPort.saveUser(user);
+                }
+                else{
+                    throw new DomainException("El código ya expiro");
+                }
+            }
+            else{
+                throw new DomainException("El código de validación es incorrecto");
+            }
+
+            return "Se ha cambiado su contraseña";
+
+        } catch (Exception e){
+            throw new DomainException("Error cambiar el password" + e.getMessage());
         }
-
-        // Generar un código aleatorio de 6 dígitos
-        String codigoRecuperacion = generarCodigoAleatorio();
-
-        UserEntity userModificado = userEntity.get();
-
-
-//        // Asignar el código de recuperación a la cuenta y establecer una expiración de 15 minutos
-//        cuentaModificada.setCodigoValidacionPassword(new CodigoValidacion(
-//                LocalDateTime.now(),
-//                codigoRecuperacion
-//        ));
-//
-//        // Guardar la cuenta actualizada en la base de datos
-//        cuentaRepo.save(cuentaModificada);
-
-        // Modificar el contenido del correo para el restablecimiento de contraseña
-        String contenido = "Hemos recibido una solicitud para restablecer tu contraseña.\n\n" +
-                "Tu código de verificación es: " + codigoRecuperacion + "\n" +
-                "Este código es válido por 15 minutos. Si no solicitaste este cambio, puedes ignorar este mensaje.";
-
-        // Enviar el correo
-//        emailServicio.enviarCorreo(
-//                new EmailDTO("Restablecimiento de contraseña - Pasteleria feliz", contenido, userModificado.getEmail())
-//        );
-//
-//        Map<String, Object> map = construirClaims(userEntity.get());
-        return "Correo enviado con exito";
     }
 
     @Override
