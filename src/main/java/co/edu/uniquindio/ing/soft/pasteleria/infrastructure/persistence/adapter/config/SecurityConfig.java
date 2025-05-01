@@ -44,7 +44,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/api/auth/login")
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/*")) // Especificar endpoint
                         .successHandler(successHandler)
                         .failureHandler(failureHandler)
