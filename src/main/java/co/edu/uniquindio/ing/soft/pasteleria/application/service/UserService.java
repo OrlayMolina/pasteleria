@@ -47,10 +47,10 @@ public class UserService implements ManageUserUseCase {
                 throw new DomainException("Ya existe un usuario con el mismo correo electrónico.");
             }
 
-            if (documentNumberExists(userOptional.get().getDocumentNumber())) {
+            userOptional = userJpaRepository.findByDocumentNumber(command.documentNumber());
+            if(userOptional.isPresent()){
                 throw new DomainException("Ya existe un usuario con el mismo número de documento.");
             }
-
             String codigo = generarCodigoAleatorio();
             ValidationCode validationCode = new ValidationCode(
                     codigo,
@@ -75,7 +75,8 @@ public class UserService implements ManageUserUseCase {
                     command.updatedAt()
             );
 
-            String body = EmailTemplateConfig.bodyCreacionCuenta.replace("[Codigo_Activacion]", codigo);
+            String body = EmailTemplateConfig.bodyCreacionCuenta.replace("[Nombres]",
+                    command.firstName()).replace("[Codigo_Activacion]",codigo);
             emailService.enviarCorreo( new EmailDTO("Creación de Usuario en Pastelería Feliz", body, command.email()) );
 
             userPort.saveUser(user);

@@ -25,6 +25,7 @@ public class UserPersistenceMapper {
         entity.setLastName(user.getLastName());
         entity.setSecondLastName(user.getSecondLastName());
         entity.setEmail(user.getEmail());
+        entity.setValidationCodeRegister(user.getValidationCodeRegister());
         entity.setPassword(user.getPassword());
         entity.setStatus(user.getStatus());
         entity.setIsAdmin(user.isAdmin());
@@ -50,6 +51,7 @@ public class UserPersistenceMapper {
                 entity.getLastName(),
                 entity.getSecondLastName(),
                 entity.getEmail(),
+                entity.getValidationCodeRegister(),
                 entity.getPassword(),
                 entity.getStatus(),
                 entity.getIsAdmin(),

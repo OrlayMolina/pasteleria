@@ -53,10 +53,12 @@ public class AuthService implements ManageAuthUseCase {
     }
 
     private Map<String, Object> construirClaims(UserEntity userEntity) {
+        boolean nuevo = userEntity.getValidationCodeRegister() != null;
         return Map.of(
                 "user_id", userEntity.getId(),
                 "email", userEntity.getEmail(),
-                "isAdmin", userEntity.getIsAdmin()
+                "isAdmin", userEntity.getIsAdmin(),
+                "isNew", nuevo
         );
     }
 
