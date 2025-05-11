@@ -4,11 +4,15 @@ import co.edu.uniquindio.ing.soft.pasteleria.application.dto.response.RecipeResp
 import co.edu.uniquindio.ing.soft.pasteleria.application.ports.output.RecipePort;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.exception.DomainException;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.model.Recipe;
+import co.edu.uniquindio.ing.soft.pasteleria.domain.model.RecipeSupply;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.RecipeEntity;
+import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.RecipeSupplyEntity;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.SupplierEntity;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.UserEntity;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.mapper.RecipePersistenceMapper;
+import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.mapper.RecipeSupplyPersistenceMapper;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.repository.RecipeRepository;
+import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.repository.RecipeSupplyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,14 +23,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
 public class RecipePersistenceAdapter implements RecipePort {
 
     private final RecipeRepository recipeJpaRepository;
+    private final RecipeSupplyRepository recipeSupplyRepository;
     private final RecipePersistenceMapper persistenceMapper;
+    private final RecipeSupplyPersistenceMapper recipeSupplyPersistenceMapper;
 
     @Override
     public Recipe saveRecipe(Recipe recipe) throws DomainException {
@@ -142,6 +150,37 @@ public class RecipePersistenceAdapter implements RecipePort {
         } catch (DomainException e) {
             throw new RuntimeException("Error al convertir UserEntity a dominio User", e);
         }
+    }
+
+    @Override
+    public List<RecipeSupply> findSuppliesByRecipeId(Long recipeId) {
+        // Opción 1: Usando findByRecipe (necesitas obtener RecipeEntity primero)
+        Optional<RecipeEntity> recipeOptional = recipeJpaRepository.findById(recipeId);
+        if (recipeOptional.isEmpty()) {
+            return List.of(); // Retornar lista vacía si la receta no existe
+        }
+
+        List<RecipeSupplyEntity> recipeSupplyEntities = recipeSupplyRepository.findByRecipe(recipeOptional.get());
+
+        // Opción 2: Usando el método JPQL (más directo y recomendado)
+        // List<RecipeSupplyEntity> recipeSupplyEntities = recipeSupplyJpaRepository.findByRecipeId(recipeId);
+
+        return recipeSupplyEntities.stream()
+                .map(entity -> {
+                    try {
+                        return recipeSupplyPersistenceMapper.toDomain(entity);
+                    } catch (DomainException e) {
+                        throw new RuntimeException("Error al mapear entidad RecipeSupply a dominio", e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getRecipeNameById(Long recipeId) throws DomainException {
+        return recipeJpaRepository.findById(recipeId)
+                .map(RecipeEntity::getName)
+                .orElseThrow(() -> new DomainException("Receta no encontrada con ID: " + recipeId));
     }
 
     @Override

@@ -3,8 +3,10 @@ package co.edu.uniquindio.ing.soft.pasteleria.application.ports.output;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.response.RecipeResponse;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.exception.DomainException;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.model.Recipe;
+import co.edu.uniquindio.ing.soft.pasteleria.domain.model.RecipeSupply;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RecipePort {
@@ -19,6 +21,10 @@ public interface RecipePort {
     Optional<RecipeResponse> findById(Long id);
 
     Optional<Recipe> findRecipeById(Long id);
+
+    List<RecipeSupply> findSuppliesByRecipeId(Long recipeId);
+
+    String getRecipeNameById(Long recipeId) throws DomainException;
 
 //    List<RecipeResponse> findAllRecipes();
 //

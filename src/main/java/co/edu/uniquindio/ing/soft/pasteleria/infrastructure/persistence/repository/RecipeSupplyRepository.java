@@ -1,5 +1,6 @@
 package co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.repository;
 
+import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.RecipeEntity;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.RecipeSupplyEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface RecipeSupplyRepository extends JpaRepository<RecipeSupplyEntity, Long> {
 
-    List<RecipeSupplyEntity> findByRecipeId(Long recipeId);
+    List<RecipeSupplyEntity> findByRecipe(RecipeEntity recipe);
 
     List<RecipeSupplyEntity> findBySupplyId(Long supplyId);
 

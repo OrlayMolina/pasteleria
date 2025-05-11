@@ -3,6 +3,9 @@ package co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.reposit
 import co.edu.uniquindio.ing.soft.pasteleria.domain.enums.OrderStatus;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.CakeOrderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +25,6 @@ public interface CakeOrderRepository extends JpaRepository<CakeOrderEntity, Long
 
     @Query("SELECT co FROM CakeOrderEntity co WHERE co.hasInventoryAlert = true")
     List<CakeOrderEntity> findAllWithInventoryAlerts();
+
+    Page<CakeOrderEntity> findAll(Specification<CakeOrderEntity> spec, Pageable pageable);
 }
