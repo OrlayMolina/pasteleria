@@ -18,7 +18,7 @@ public class Supplier {
     private Long id;
     private String name;
     private TypeDocument typeDocument;
-    private String supplierDocument;
+    private String supplierID;
     private String address;
     private String phone;
     private String email;
@@ -43,7 +43,7 @@ public class Supplier {
 
         this.id = id;
         this.name = name;
-        this.supplierDocument = supplierDocument;
+        this.supplierID = supplierDocument;
         this.address = address;
         this.phone = phone;
         this.email = email;
@@ -65,7 +65,7 @@ public class Supplier {
 
         this.id = id;
         this.name = name;
-        this.supplierDocument = supplierDocument;
+        this.supplierID = supplierDocument;
         this.address = address;
         this.phone = phone;
         this.email = email;
@@ -94,7 +94,7 @@ public class Supplier {
         this.id = id;
         this.name = name;
         this.typeDocument = typeDocument;
-        this.supplierDocument = supplierDocument;
+        this.supplierID = supplierDocument;
         this.address = address;
         this.phone = phone;
         this.email = email;
@@ -114,7 +114,7 @@ public class Supplier {
         if (isActive()) {
             return this;
         }
-        Supplier activated = new Supplier(id, name, supplierDocument, address, phone, email, contactPerson, Status.ACTIVO, createdAt, updatedAt);
+        Supplier activated = new Supplier(id, name, supplierID, address, phone, email, contactPerson, Status.ACTIVO, createdAt, updatedAt);
         activated.typeDocument = this.typeDocument;
         activated.lastOrderDate = this.lastOrderDate;
         activated.lastReviewRating = this.lastReviewRating;
@@ -129,7 +129,7 @@ public class Supplier {
         if (!isActive()) {
             return this;
         }
-        Supplier deactivated = new Supplier(id, name, supplierDocument, address, phone, email, contactPerson, Status.INACTIVO, createdAt, updatedAt);
+        Supplier deactivated = new Supplier(id, name, supplierID, address, phone, email, contactPerson, Status.INACTIVO, createdAt, updatedAt);
         deactivated.typeDocument = this.typeDocument;
         deactivated.lastOrderDate = this.lastOrderDate;
         deactivated.lastReviewRating = this.lastReviewRating;

@@ -12,7 +12,7 @@ import java.util.List;
 public interface ManageSupplierUseCase {
     MensajeDTO<SupplierResponse> createSupplier(CreateSupplierCommand command) throws DomainException;
 
-    MensajeDTO<SupplierResponse> updateSupplier(Long id, UpdateSupplierCommand command);
+    MensajeDTO<String> updateSupplier(Long id, UpdateSupplierCommand command);
 
     MensajeDTO<Void> deleteSupplier(Long id);
 

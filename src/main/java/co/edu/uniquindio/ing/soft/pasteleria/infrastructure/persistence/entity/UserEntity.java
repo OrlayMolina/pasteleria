@@ -54,7 +54,7 @@ public class UserEntity {
     private String email;
 
     @Convert(converter = ValidationCodeConverter.class)
-    private ValidationCode ValidationCodeRegister;
+    private ValidationCode validationCodeRegister;
 
     @Column(name = "password", nullable = false)
     private String password;
