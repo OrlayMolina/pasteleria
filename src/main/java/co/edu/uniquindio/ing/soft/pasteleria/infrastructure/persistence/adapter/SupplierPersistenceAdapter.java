@@ -6,6 +6,7 @@ import co.edu.uniquindio.ing.soft.pasteleria.domain.model.Supplier;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.entity.SupplierEntity;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.mapper.SupplierPersistenceMapper;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.repository.SupplierJpaRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -153,17 +155,30 @@ public class SupplierPersistenceAdapter implements SupplierPort {
         };
     }
 
-    // Método para crear la especificación de búsqueda
+    // Metodo para crear la especificacion de busqueda
     private Specification<SupplierEntity> createSearchSpecification(String searchTerm) {
         String term = "%" + searchTerm.toLowerCase() + "%";
 
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.or(
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), term),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), term),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("contactPerson")), term),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("phone")), term),
-                        criteriaBuilder.like(root.get("id").as(String.class), term)
-                );
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Busqueda por campos de texto (case-insensitive)
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), term));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), term));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("contactPerson")), term));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("phone")), term));
+
+            // Busqueda por ID (si el termino es numerico)
+            try {
+                Long idValue = Long.parseLong(searchTerm.trim());
+                predicates.add(criteriaBuilder.equal(root.get("id"), idValue));
+            } catch (NumberFormatException ignored) {
+                // Ignorar si no es un número
+            }
+
+            // Combinar predicados con OR
+            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+        };
     }
+
 }

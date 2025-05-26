@@ -20,8 +20,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserJpaRepository userJpaRepository;
     private final JWTUtils jwtUtils;
-    //private final String url = "https://pasteleria-feliz.web.app";
-    private final String url = "http://localhost:4200";
+    private final String url = "https://pasteleria-feliz.web.app";
+    // private final String url = "http://localhost:4200";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -54,7 +54,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String token = jwtUtils.generarToken(email, map); // Puedes cambiar el rol si aplica
 
         // 6. Redirigir al frontend con el token (Angular debe leerlo)
-        String redirectUrl = url + "/login-success?token=" + token;
+        String redirectUrl = url + "/login?token=" + token;
 
         response.sendRedirect(redirectUrl);
     }
