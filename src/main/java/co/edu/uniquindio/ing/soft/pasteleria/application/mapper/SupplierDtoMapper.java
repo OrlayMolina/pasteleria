@@ -49,7 +49,7 @@ public class SupplierDtoMapper {
             supplier.setName(command.name());
         }
         if (command.supplierID() != null) {
-            supplier.setSupplierDocument(command.supplierID());
+            supplier.setSupplierID(command.supplierID());
         }
         if (command.address() != null) {
             supplier.setAddress(command.address());
@@ -100,7 +100,7 @@ public class SupplierDtoMapper {
         return new SupplierResponse(
                 supplier.getId(),
                 supplier.getName(),
-                supplier.getSupplierDocument(),
+                supplier.getSupplierID(),
                 supplier.getAddress(),
                 supplier.getPhone(),
                 supplier.getEmail(),
@@ -124,7 +124,7 @@ public class SupplierDtoMapper {
         return new SupplierResponse(
                 supplier.getId(),
                 supplier.getName(),
-                supplier.getSupplierDocument(),
+                supplier.getSupplierID(),
                 supplier.getAddress(),
                 supplier.getPhone(),
                 supplier.getEmail(),

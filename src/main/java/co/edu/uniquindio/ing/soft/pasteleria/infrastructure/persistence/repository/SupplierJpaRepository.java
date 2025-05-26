@@ -15,5 +15,7 @@ public interface SupplierJpaRepository extends JpaRepository<SupplierEntity, Lon
 
     Optional<SupplierEntity> findBySupplierID(String supplierID);
 
+    Optional<SupplierEntity> findByEmail(String email);
+
     Page<SupplierEntity> findAll(Specification<SupplierEntity> spec, Pageable pageable);
 }

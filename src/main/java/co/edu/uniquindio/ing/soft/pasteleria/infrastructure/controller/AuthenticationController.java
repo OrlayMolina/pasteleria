@@ -6,6 +6,7 @@ import co.edu.uniquindio.ing.soft.pasteleria.application.dto.MensajeDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.dto.TokenDTO;
 import co.edu.uniquindio.ing.soft.pasteleria.application.service.AuthService;
 import co.edu.uniquindio.ing.soft.pasteleria.domain.exception.DomainException;
+import co.edu.uniquindio.ing.soft.pasteleria.domain.exception.ValidationCodeNotSentException;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.adapter.config.JWTUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +40,19 @@ public class AuthenticationController {
     public ResponseEntity<MensajeDTO<String>> resetPassword(@RequestBody CambiarPasswordDTO cambiarPasswordDTO) {
         try {
             String msj = authService.resetPassword(cambiarPasswordDTO);
-            return ResponseEntity.ok(new MensajeDTO<>(false, "Conectó"));
+            return ResponseEntity.ok(new MensajeDTO<>(false, msj));
         } catch (DomainException e) {
-            return ResponseEntity.status(NOT_FOUND).body(new MensajeDTO<>(true, "Error enviando correo de contraseña"));
+            return ResponseEntity.status(NOT_FOUND).body(new MensajeDTO<>(true, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/enviar-codigo")
+    public ResponseEntity<MensajeDTO<String>> sendResetCode(@RequestBody CambiarPasswordDTO cambiarPasswordDTO) {
+        try {
+            String msj = authService.enviarCodigoRecuperacionPassword(cambiarPasswordDTO.email());
+            return ResponseEntity.ok(new MensajeDTO<>(false, msj));
+        } catch (ValidationCodeNotSentException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new MensajeDTO<>(true, e.getMessage()));
         }
     }
 

@@ -27,10 +27,10 @@ public class SupplierController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MensajeDTO<SupplierResponse>> updateSupplier(
+    public ResponseEntity<MensajeDTO<String>> updateSupplier(
             @PathVariable Long id,
             @RequestBody @Valid UpdateSupplierCommand command) throws DomainException {
-        MensajeDTO<SupplierResponse> response = supplierUseCase.updateSupplier(id, command);
+        MensajeDTO<String> response = supplierUseCase.updateSupplier(id, command);
         return ResponseEntity.ok(response);
     }
 

@@ -67,12 +67,12 @@ public class AuthService implements ManageAuthUseCase {
 
         try{
             Optional<UserEntity> userEntity = userJpaRepository.findByEmail(cambiarPasswordDTO.email());
-
             if (userEntity.isEmpty()) {
                 throw new DomainException("El correo no está registrado en el sistema.");
             }
 
             UserEntity userEnt = userEntity.get();
+
             ValidationCode codigoValidacion = userEnt.getValidationCodePassword();
 
             if (codigoValidacion.getCode().

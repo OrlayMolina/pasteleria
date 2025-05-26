@@ -13,6 +13,7 @@ import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.mapper.R
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.mapper.RecipeSupplyPersistenceMapper;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.repository.RecipeRepository;
 import co.edu.uniquindio.ing.soft.pasteleria.infrastructure.persistence.repository.RecipeSupplyRepository;
+import jakarta.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -95,16 +96,29 @@ public class RecipePersistenceAdapter implements RecipePort {
         };
     }
 
-    // Método para crear la especificación de búsqueda
+    // Metodo para crear la especificación de búsqueda
     private Specification<RecipeEntity> createSearchSpecification(String searchTerm) {
         String term = "%" + searchTerm.toLowerCase() + "%";
 
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.or(
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), term),
-                        criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), term),
-                        criteriaBuilder.like(root.get("id").as(String.class), term)
-                );
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Busqueda por nombre (case-insensitive)
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), term));
+
+            // Busqueda por descripcion (case-insensitive)
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), term));
+
+            // Busqueda por ID (si el termino es numerico)
+            try {
+                Long idValue = Long.parseLong(searchTerm.trim());
+                predicates.add(criteriaBuilder.equal(root.get("id"), idValue));
+            } catch (NumberFormatException ignored) {
+                // Ignorar si no es un numero
+            }
+            // Combinar todos los predicados con OR
+            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+        };
     }
 
     @Override

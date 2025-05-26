@@ -113,7 +113,7 @@ public class SupplierService implements ManageSupplierUseCase {
     }
 
     @Override
-    public MensajeDTO<SupplierResponse> updateSupplier(Long id, UpdateSupplierCommand command) {
+    public MensajeDTO<String> updateSupplier(Long id, UpdateSupplierCommand command) {
         try {
             Optional<Supplier> optionalSupplier = supplierPort.findSupplierById(id);
             if (optionalSupplier.isEmpty()) {
@@ -138,14 +138,22 @@ public class SupplierService implements ManageSupplierUseCase {
                 if (supplierWithSameID.isPresent() && !supplierWithSameID.get().getId().equals(id)) {
                     throw new DomainException("Ya existe otro proveedor con el mismo número de ID.");
                 }
-                existingSupplier.setSupplierDocument(command.supplierID());
+                existingSupplier.setSupplierID(command.supplierID());
+            }
+
+            if (command.email() != null && !command.email().equals(existingSupplier.getEmail())) {
+                Optional<SupplierEntity> supplierWithSameEmail = supplierJpaRepository.findByEmail(command.email());
+                if (supplierWithSameEmail.isPresent() && !supplierWithSameEmail.get().getId().equals(id)) {
+                    throw new DomainException("Ya existe otro proveedor con el mismo correo electrónico.");
+                }
+                existingSupplier.setEmail(command.email());
             }
 
             existingSupplier.setAddress(command.address());
             existingSupplier.setPhone(command.phone());
-            existingSupplier.setEmail(command.email());
             existingSupplier.setContactPerson(command.contactPerson());
             existingSupplier.setStatus(command.status());
+            existingSupplier.setUserModify(command.userModify());
             existingSupplier.setUpdatedAt(command.updatedAt());
 
             Supplier updatedSupplier = supplierPort.saveSupplier(existingSupplier);
@@ -199,9 +207,9 @@ public class SupplierService implements ManageSupplierUseCase {
             // Crear respuesta enriquecida
             SupplierResponse response = createEnrichedResponse(updatedSupplier, latestReview.orElse(null));
 
-            return new MensajeDTO<>(false, response);
+            return new MensajeDTO<>(false, "Proveedor actualizado con exito");
         } catch (DomainException e) {
-            return new MensajeDTO<>(true, null);
+            return new MensajeDTO<>(true, e.getMessage());
         }
     }
 
@@ -317,7 +325,7 @@ public class SupplierService implements ManageSupplierUseCase {
         return new SupplierResponse(
                 supplier.getId(),
                 supplier.getName(),
-                supplier.getSupplierDocument(),
+                supplier.getSupplierID(),
                 supplier.getAddress(),
                 supplier.getPhone(),
                 supplier.getEmail(),
